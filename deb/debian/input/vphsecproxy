@@ -1,0 +1,95 @@
+#!/bin/bash
+#
+# vphsecproxy      This is the init script for starting up the VPH-SHARE Security Proxy
+#
+# chkconfig: 2345 80 20
+#
+# description:  This is a VPH-Share security proxy that protects the access to VPH Atomic Services, by both \
+#		encrypting their communications and controlling who access them.
+# processname:  SecProxyLauncher
+# config: 	/etc/vph-secproxy/SecProxy.properties
+# pidfile: 	/var/run/secproxy.pid
+#
+SECPROXY_PATH="/etc/vph-secproxy"
+SECPROXY_LIB="/usr/share/vph-secproxy/lib"
+SECPROXY_LOGS="/var/log/vph-secproxy"
+SECPROXY_PIDS="/var/run/secproxy.pid"
+JAVA=`which java`
+
+
+
+# See how we were called.
+case "$1" in
+    start)
+        echo "Starting SecProxy backend: "
+        
+        if [ -f ${SECPROXY_PIDS} ]; then
+					exec<${SECPROXY_PIDS}
+	        while read pid
+           	do
+							if ps ax | grep -v grep | grep $pid | grep "SecProxy" > /dev/null
+							then
+		          	echo "SecProxy backend already started."
+		           	exit                
+							else
+			   				echo "SecProxy is not running"
+		          	rm ${SECPROXY_PIDS}
+			   				break
+							fi	            
+           	done             
+        fi
+        
+        echo " * Starting proxy ..."
+	cd ${SECPROXY_PATH}
+
+	CLASSPATH=""
+        for d in `ls $SECPROXY_LIB` ; do
+                CLASSPATH=$CLASSPATH:$SECPROXY_LIB/$d
+        done
+
+        ${JAVA} -classpath ${CLASSPATH} com.atos.SecProxyLauncher &> ${SECPROXY_LOGS}/proxy_console.log &
+      	pid=$!
+      	echo $pid >> ${SECPROXY_PIDS}
+	            
+        echo "SecProxy backend succesfully started."
+        cd -
+        #wait $pid
+    ;;
+    
+    stop)
+        echo "Stopping SecProxy backend: "
+        
+        if [ -f ${SECPROXY_PIDS} ]; then
+           exec<${SECPROXY_PIDS}
+           while read pid
+           do
+            echo " * Killing process $pid"
+            kill -9 $pid
+           done  
+           
+           rm ${SECPROXY_PIDS}
+        else
+           echo "SecProxy backend already stoped."       
+        fi              
+    ;;
+
+    status)
+        echo -n "SecProxy backend status: "        
+        if [ -f ${SECPROXY_PIDS} ]; then
+            echo "STARTED"
+        else
+            echo "STOPPED"  
+        fi
+    ;;
+
+    restart)
+        $0 stop
+        $0 start
+    ;;
+    *)
+        echo "Usage: runSecProxy.sh {start|stop|status|restart}"
+        exit 1
+    ;;    
+esac
+
+exit 0

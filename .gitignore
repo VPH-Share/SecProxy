@@ -1,0 +1,8 @@
+deb/debian/input/lib
+deb/debian/input/lib/*
+deb/debian/input/templates
+deb/debian/input/templates/*
+deb/debian/input/*.pem
+deb/debian/input/*.properties
+deb/debian/input/*.jks
+deb/build-stamp

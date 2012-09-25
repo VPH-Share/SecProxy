@@ -1,0 +1,5 @@
+/usr/share/vph-secproxy
+/usr/share/vph-secproxy/lib
+/var/log/vph-secproxy
+/etc/vph-secproxy
+/etc/vph-secproxy/templates
