@@ -1,0 +1,38 @@
+# This is a default template for a post-install scriptlet.
+# Uncomment only required functions and remove any functions
+# you don't need (and this header).
+
+## arg 1:  the new package version
+pre_install() {
+  useradd -M -d /tmp/ -s /bin/bash secproxy 
+}
+
+## arg 1:  the new package version
+post_install() {
+  chown secproxy:secproxy /var/run/vph-secproxy
+  chown secproxy:secproxy /var/log/vph-secproxy
+}
+
+## arg 1:  the new package version
+## arg 2:  the old package version
+#pre_upgrade() {
+  # do something here
+#}
+
+## arg 1:  the new package version
+## arg 2:  the old package version
+#post_upgrade() {
+  # do something here
+#}
+
+## arg 1:  the old package version
+#pre_remove() {
+  # do something here
+#}
+
+## arg 1:  the old package version
+post_remove() {
+  userdell secproxy  
+}
+
+# vim:set ts=2 sw=2 et:

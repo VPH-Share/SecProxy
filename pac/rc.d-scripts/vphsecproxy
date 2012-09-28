@@ -1,0 +1,112 @@
+#!/bin/bash
+#
+# vphsecproxy      This is the init script for starting up the VPH-SHARE Security Proxy
+#
+# chkconfig: 2345 80 20
+#
+# description:  This is a VPH-Share security proxy that protects the access to VPH Atomic Services, by both \
+#		encrypting their communications and controlling who access them.
+# processname:  SecProxyLauncher
+# config: 	/etc/vph-secproxy/SecProxy.properties
+# pidfile: 	/var/run/secproxy.pid
+#
+SECPROXY_PATH="/etc/vph-secproxy"
+SECPROXY_LIB="/usr/share/vph-secproxy"
+SECPROXY_LOGS="/var/log/vph-secproxy"
+SECPROXY_PIDS="/var/run/vph-secproxy/secproxy.pid"
+JAVA=`which java`
+
+. /etc/rc.conf
+. /etc/rc.d/functions
+
+service_start() {
+    if [ -f ${SECPROXY_PIDS} ]; then
+        exec<${SECPROXY_PIDS}
+        while read pid
+        do
+            if ps ax | grep -v grep | grep $pid | grep "SecProxy" > /dev/null
+            then
+                echo "SecProxy backend already started."
+                exit
+            else
+                echo "SecProxy is not running"
+                rm ${SECPROXY_PIDS}
+                break
+            fi
+        done
+    fi
+
+    cd ${SECPROXY_PATH}
+
+    CLASSPATH=""
+    for d in `ls $SECPROXY_LIB` ; do
+        CLASSPATH=$CLASSPATH:$SECPROXY_LIB/$d
+    done
+
+    su secproxy -c "${JAVA} -classpath ${CLASSPATH}:. com.atos.SecProxyLauncher &> ${SECPROXY_LOGS}/proxy_console.log & echo \$! >> ${SECPROXY_PIDS}"
+    cd -
+
+}
+
+service_stop() {
+   if [ -f ${SECPROXY_PIDS} ]; then
+       exec<${SECPROXY_PIDS}
+       while read pid
+       do
+           kill -9 $pid &> /dev/null
+       done
+
+       rm ${SECPROXY_PIDS}
+   else
+       echo "SecProxy backend already stoped."       
+   fi
+}
+
+# See how we were called.
+case "$1" in
+    start)
+        stat_busy "Starting SecProxy backend"
+	if service_start; then
+            add_daemon vphsecproxy
+            stat_done
+        else
+            stat_fail
+            exit 1
+        fi
+    ;;
+    
+    stop)
+        stat_busy "Stopping SecProxy backend"
+        if service_stop; then
+            rm_daemon vphsecproxy
+            stat_done
+        else
+            stat_fail
+            exit 1
+        fi   
+    ;;
+
+    status)
+        echo -n "SecProxy backend status: "        
+        if [ -f ${SECPROXY_PIDS} ]; then
+            echo "STARTED"
+        else
+            echo "STOPPED"  
+        fi
+    ;;
+
+    restart)
+    	stat_busy "Restarting SecProxy backend"
+        if service_stop && service_start; then
+            add_daemon vphsecproxy
+            stat_done
+        else
+            stat_fail
+            exit 1
+        fi
+    ;;
+    *)
+        echo "Usage: $0 {start|stop|status|restart}"
+        exit 1
+    ;;    
+esac

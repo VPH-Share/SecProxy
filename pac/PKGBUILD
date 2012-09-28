@@ -1,0 +1,49 @@
+# This is an example PKGBUILD file. Use this as a start to creating your own,
+# and remove these comments. For more information, see 'man PKGBUILD'.
+# NOTE: Please fill out the license field for your package! If it is unknown,
+# then please put 'unknown'.
+
+# Maintainer: Marek Kasztelnik <m.kasztelnik@cyfronet.pl>
+pkgname=vph-secproxy
+pkgver=1.0
+pkgrel=1
+epoch=
+pkgdesc="Security Proxy for VPH Share applications"
+arch=(any)
+url=""
+license=('GPL')
+groups=()
+depends=(java-runtime)
+makedepends=()
+checkdepends=()
+optdepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=INSTALL
+changelog=
+source=($pkgname-$pkgver.tar.gz)
+noextract=()
+#md5sums=() #generate with 'makepkg -g'
+md5sums=('03f8d9a2d61f1f0b205638130d2eeaf1')
+
+build() {
+  mkdir -p $pkgdir/etc/vph-secproxy/templates
+  mkdir -p $pkgdir/usr/share/vph-secproxy
+  mkdir -p $pkgdir/etc/rc.d
+  mkdir -p $pkgdir/var/log/vph-secproxy
+  mkdir -p $pkgdir/var/run/vph-secproxy
+
+  cp $startdir/rc.d-scripts/* $pkgdir/etc/rc.d
+  cp $srcdir/SecProxy/*.properties $pkgdir/etc/vph-secproxy
+  cp $srcdir/SecProxy/*.jks $pkgdir/etc/vph-secproxy
+  cp $srcdir/SecProxy/*.pem $pkgdir/etc/vph-secproxy
+  cp $srcdir/SecProxy/templates/* $pkgdir/etc/vph-secproxy/templates
+  cp $srcdir/SecProxy/lib/* $pkgdir/usr/share/vph-secproxy
+
+  cp $startdir/log-config/*.properties $pkgdir/etc/vph-secproxy
+}
+
+# vim:set ts=2 sw=2 et:

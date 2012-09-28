@@ -6,3 +6,8 @@ deb/debian/input/*.pem
 deb/debian/input/*.properties
 deb/debian/input/*.jks
 deb/build-stamp
+
+pac/pkg
+pac/src
+pac/*.xz
+pac/*.tar.gz
