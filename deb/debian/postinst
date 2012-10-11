@@ -27,6 +27,8 @@ case "$1" in
 
       update-rc.d vphsecproxy start 80 2 3 4 5 . stop 20 0 1 6 .
       update-rc.d vphsecagent start 80 2 3 4 5 . stop 20 0 1 6 .
+      service vphsecproxy restart
+      service vphsecagent restart
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
