@@ -11,7 +11,7 @@ Homepage: http://vphshare.org
 Package: vph-secproxy
 Section: security
 Architecture: all
-Depends: openjdk-6-jre | openjdk-6-jdk | oracle-java7-installer | oracle-jdk7-installer
+Depends: openjdk-6-jre | openjdk-6-jdk | oracle-java7-installer | oracle-jdk7-installer | openjdk-6-jre-headless | sun-java6-jdk | sun-java6-jre
 Description: Security Proxy for VPH Share applications
  Security Proxy is responsible for checking VPH Share user credentials and 
  forward only those request which fulfil security constraints
