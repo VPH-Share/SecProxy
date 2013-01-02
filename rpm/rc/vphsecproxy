@@ -1,0 +1,100 @@
+#!/bin/bash
+#
+# vphsecproxy      This is the init script for starting up the VPH-SHARE Security Proxy
+#
+# chkconfig: 2345 80 20
+#
+# description:  This is a VPH-Share security proxy that protects the access to VPH Atomic Services, by both \
+#		encrypting their communications and controlling who access them.
+# processname:  SecProxyLauncher
+# config: 	/etc/vph-secproxy/SecProxy.properties
+# pidfile: 	/var/run/secproxy.pid
+#
+SECPROXY_PATH="/etc/vph-secproxy"
+SECPROXY_LIB="/usr/share/vph-secproxy"
+SECPROXY_LOGS="/var/log/vph-secproxy"
+SECPROXY_PIDS="/var/run/vph-secproxy/secproxy.pid"
+JAVA=`which java`
+
+. /etc/rc.d/init.d/functions
+
+service_start() {
+    if [ -f ${SECPROXY_PIDS} ]; then
+        exec<${SECPROXY_PIDS}
+        while read pid
+        do
+            if ps ax | grep -v grep | grep $pid | grep "SecProxy" > /dev/null
+            then
+                echo "SecProxy backend already started."
+                exit
+            else
+                echo "SecProxy is not running"
+                rm ${SECPROXY_PIDS}
+                break
+            fi
+        done
+    fi
+
+    cd ${SECPROXY_PATH}
+
+    CLASSPATH=""
+    for d in `ls $SECPROXY_LIB` ; do
+        CLASSPATH=$CLASSPATH:$SECPROXY_LIB/$d
+    done
+    
+    # For SELinux we need to use 'runuser' not 'su'
+    if [ -x "/sbin/runuser" ]; then
+      SU="/sbin/runuser"
+    else
+      SU="/bin/su"
+    fi 
+
+    echo "Starting SecProxy... "
+    $SU secproxy -c "${JAVA} -classpath ${CLASSPATH}:. com.atos.SecProxyLauncher &> ${SECPROXY_LOGS}/proxy_console.log & echo \$! >> ${SECPROXY_PIDS}"
+    cd - > /dev/null
+
+}
+
+service_stop() {
+   if [ -f ${SECPROXY_PIDS} ]; then
+       exec<${SECPROXY_PIDS}
+       while read pid
+       do
+	   echo "Stopping SecProxy..."
+           kill -9 $pid &> /dev/null
+       done
+
+       rm ${SECPROXY_PIDS}
+   else
+       echo "SecProxy backend already stoped."       
+   fi
+}
+
+# See how we were called.
+case "$1" in
+    start)
+	service_start
+    ;;
+    
+    stop)
+        service_stop
+    ;;
+
+    status)
+        echo -n "SecProxy backend status: "        
+        if [ -f ${SECPROXY_PIDS} ]; then
+            echo "STARTED"
+        else
+            echo "STOPPED"  
+        fi
+    ;;
+
+    restart)
+        service_stop
+	service_start
+    ;;
+    *)
+        echo "Usage: $0 {start|stop|status|restart}"
+        exit 1
+    ;;    
+esac

@@ -1,0 +1,99 @@
+#!/bin/bash
+#
+# vphsecagent     This is the init script for starting up the VPH-SHARE Security Proxy Agent
+#
+# chkconfig: 2345 80 20
+#
+# description:  This is a VPH-Share security proxy that protects the access to VPH Atomic Services, by both \
+#		encrypting their communications and controlling who access them.
+# processname:  SecAgentLauncher
+# config: 	/etc/vph-secproxy/SecAgent.properties
+# pidfile: 	/var/run/secagentpid
+#
+SECAGENT_PATH="/etc/vph-secproxy"
+SECAGENT_LIB="/usr/share/vph-secproxy"
+SECAGENT_LOGS="/var/log/vph-secproxy"
+SECAGENT_PIDS="/var/run/vph-secproxy/secagent.pid"
+JAVA=`which java`
+
+. /etc/rc.d/init.d/functions
+
+service_start() {
+    if [ -f ${SECAGENT_PIDS} ]; then
+        exec<${SECAGENT_PIDS}
+        while read pid
+        do
+            if ps ax | grep -v grep | grep $pid | grep "SecAgent" > /dev/null
+            then
+                echo "SecAgent backend already started."
+                exit
+            else
+                echo "SecAgent is not running"
+                rm ${SECAGENT_PIDS}
+                break
+            fi
+        done
+    fi
+
+    cd ${SECAGENT_PATH}
+
+    CLASSPATH=""
+    for d in `ls $SECAGENT_LIB` ; do
+        CLASSPATH=$CLASSPATH:$SECAGENT_LIB/$d
+    done
+
+    # For SELinux we need to use 'runuser' not 'su'
+    if [ -x "/sbin/runuser" ]; then
+      SU="/sbin/runuser"
+    else
+      SU="/bin/su"
+    fi 
+
+    echo "Starting SecAgent... "
+    $SU secproxy -c "${JAVA} -classpath ${CLASSPATH}:. com.atos.SecAgentLauncher &> ${SECAGENT_LOGS}/agent_console.log & echo \$! >> ${SECAGENT_PIDS}"
+    cd - > /dev/null
+}
+
+service_stop() {
+   if [ -f ${SECAGENT_PIDS} ]; then
+       exec<${SECAGENT_PIDS}
+       while read pid
+       do
+	   echo "Stopping SecAgent..."
+           kill -9 $pid &> /dev/null
+       done
+
+       rm ${SECAGENT_PIDS}
+   else
+       echo "SecAgent backend already stoped..."
+   fi
+}
+
+# See how we were called.
+case "$1" in
+    start)
+	service_start
+    ;;
+    
+    stop)
+        service_stop
+    ;;
+
+    status)
+        echo -n "SecAgent backend status: "        
+        if [ -f ${SECAGENT_PIDS} ]; then
+            echo "STARTED"
+        else
+            echo "STOPPED"  
+        fi
+    ;;
+
+    restart)
+        service_stop
+	service_start
+    ;;
+    *)
+        echo "Usage: $0 {start|stop|status|restart}"
+        exit 1
+    ;;    
+esac

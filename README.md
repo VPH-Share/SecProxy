@@ -29,7 +29,9 @@ NOTE: Run all commands as normal user - NOT root !!!
 	$ mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 	$ echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros
 * Copy 'SecProxy.tar.gz' into rpmbuild/SOURCES
-* Copy 'SecProxy-rc.tar.gz' from this repo into rpmbuild/SOURCES
+* Prepare 'SecProxy-rc.tar.gz' by running in SecProxy/rpm command:
+	$ tar -czvf SecProxy-rc.tar.gz rc
+* Copy this 'SecProxy-rc.tar.gz' into rpmbuild/SOURCES
 * Copy 'secproxy.spec' from this repo into rpmbuild/SPECS/
 * Build package using: 
 	$ rpmbuild -ba ~/rpmbuild/SPECS/secproxy.spec
