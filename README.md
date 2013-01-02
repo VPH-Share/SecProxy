@@ -1,7 +1,7 @@
 SecProxy
 ========
 
-SecProxy tar.gz, deb and pac builder scripts. 
+SecProxy tar.gz, deb, pac and rpm builder scripts. 
 
 Building deb package manual
 -------
@@ -19,3 +19,17 @@ Building pacman package manual
 * Copy `SecProxy.tar.gz` into `pac/$pkgname-$pkgver.tar.gz`
 * Generate md5 sum and update `PKGBUILD` file (`makepkg -g >> PKGBUILD`)
 * Generate pacman package (`makepkg`, use `makepkg -s` to install required dependencies) 
+
+Building RPM package manual (for RHEL/CentOS 6)
+-------
+
+NOTE: Run all commands as normal user - NOT root !!!
+
+* Prapare build environment:
+	$ mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+	$ echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros
+* Copy 'SecProxy.tar.gz' into rpmbuild/SOURCES
+* Copy 'SecProxy-rc.tar.gz' from this repo into rpmbuild/SOURCES
+* Copy 'secproxy.spec' from this repo into rpmbuild/SPECS/
+* Build package using: 
+	$ rpmbuild -ba ~/rpmbuild/SPECS/secproxy.spec
