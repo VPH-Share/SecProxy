@@ -1,5 +1,5 @@
-Name:		vph-secproxy
-Version:	1.0
+Name:  	vph-secproxy
+Version:	1.1
 Release:	1%{?dist}
 Summary:	Security Proxy for VPH Share applications
 
@@ -12,7 +12,7 @@ Source0:	SecProxy.tar.gz
 Source1:	SecProxy-rc.tar.gz
 BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
-Requires:	java, iptables
+Requires:	java >= 1:1.6.0, iptables
 
 %description
 Security Proxy for VPH Share applications allowing secure access to the Atomic Service Instances.
@@ -33,6 +33,7 @@ mkdir -p %{buildroot}%{_datadir}/vph-secproxy # usr/share
 mkdir -p %{buildroot}%{_initrddir} # etc/rc.d/init.d
 mkdir -p %{buildroot}%{_localstatedir}/log/vph-secproxy # var
 mkdir -p %{buildroot}%{_localstatedir}/run/vph-secproxy
+mkdir -p %{buildroot}%{_localstatedir}/cache/vph-secproxy
 
 cp rc/* %{buildroot}%{_initrddir}
 cp *.properties %{buildroot}%{_sysconfdir}/vph-secproxy
@@ -68,6 +69,7 @@ userdel secproxy
 %defattr(-,root,root,-)
 %dir %attr(-,secproxy,secproxy) %{_localstatedir}/log/vph-secproxy
 %dir %attr(-,secproxy,secproxy) %{_localstatedir}/run/vph-secproxy
+%dir %attr(-,secproxy,secproxy) %{_localstatedir}/cache/vph-secproxy
 %config %{_sysconfdir}/vph-secproxy/*
 %config %attr(755,-,-) %{_initrddir}/*
 %{_datadir}/vph-secproxy/*
