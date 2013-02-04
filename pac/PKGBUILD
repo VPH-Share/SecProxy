@@ -5,7 +5,7 @@
 
 # Maintainer: Marek Kasztelnik <m.kasztelnik@cyfronet.pl>
 pkgname=vph-secproxy
-pkgver=1.0
+pkgver=1.1
 pkgrel=1
 epoch=
 pkgdesc="Security Proxy for VPH Share applications"
@@ -27,16 +27,20 @@ changelog=
 source=($pkgname-$pkgver.tar.gz)
 noextract=()
 #md5sums=() #generate with 'makepkg -g'
-md5sums=('03f8d9a2d61f1f0b205638130d2eeaf1')
+md5sums=('fe27f392830bf437d257d819baac7f3e')
 
 build() {
   mkdir -p $pkgdir/etc/vph-secproxy/templates
   mkdir -p $pkgdir/usr/share/vph-secproxy
-  mkdir -p $pkgdir/etc/rc.d
+  mkdir -p $pkgdir/usr/sbin
+  mkdir -p $pkgdir/usr/lib/systemd/system
   mkdir -p $pkgdir/var/log/vph-secproxy
   mkdir -p $pkgdir/var/run/vph-secproxy
+  mkdir -p $pkgdir/var/cache/vph-secproxy
 
-  cp $startdir/rc.d-scripts/* $pkgdir/etc/rc.d
+  cp $startdir/systemd-scripts/*.service $pkgdir/usr/lib/systemd/system/.
+  cp $startdir/systemd-scripts/vphsecagent $pkgdir/usr/sbin/.
+  cp $startdir/systemd-scripts/vphsecproxy $pkgdir/usr/sbin/.
   cp $srcdir/SecProxy/*.properties $pkgdir/etc/vph-secproxy
   cp $srcdir/SecProxy/*.jks $pkgdir/etc/vph-secproxy
   cp $srcdir/SecProxy/*.pem $pkgdir/etc/vph-secproxy
