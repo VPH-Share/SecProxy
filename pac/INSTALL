@@ -9,31 +9,56 @@ pre_install() {
 
 ## arg 1:  the new package version
 post_install() {
+  
+  mkdir -p /var/run/vph-secproxy
+  mkdir -p /var/cache/vph-secproxy
+  mkdir -p /var/log/vph-secproxy
+  mkdir -p /etc/vph-secproxy
   chown secproxy:secproxy /var/run/vph-secproxy
+  chown secproxy:secproxy /var/cache/vph-secproxy
   chown secproxy:secproxy /var/log/vph-secproxy
-  rc.d restart vphsecproxy vphsecagent
+  chown secproxy:secproxy /etc/vph-secproxy
+  chmod +x /usr/sbin/vphsecagent
+  chmod +x /usr/sbin/vphsecproxy
+  systemctl enable vphsecagent.service
+  systemctl enable vphsecproxy.service
+  systemctl start vphsecagent.service
+  systemctl start vphsecproxy.service
 }
 
 ## arg 1:  the new package version
 ## arg 2:  the old package version
-#pre_upgrade() {
-  # do something here
-#}
+pre_upgrade() {
+
+  systemctl stop vphsecagent.service
+  systemctl stop vphsecproxy.service
+}
 
 ## arg 1:  the new package version
 ## arg 2:  the old package version
-#post_upgrade() {
-  # do something here
-#}
+post_upgrade() {
+  systemctl start vphsecagent.service
+  systemctl start vphsecproxy.service
+}
 
 ## arg 1:  the old package version
-#pre_remove() {
-  # do something here
-#}
+pre_remove() {
+  systemctl stop vphsecagent.service
+  systemctl stop vphsecproxy.service
+}
 
 ## arg 1:  the old package version
 post_remove() {
-  userdell secproxy  
+  rm -r /var/run/vph-secproxy
+  rm -r /var/log/vph-secproxy
+  rm -r /var/cache/vph-secproxy
+  rm -r /usr/share/vph-secproxy
+  rm -r /etc/vph-secproxy
+  rm /usr/sbin/vphsecagent
+  rm /usr/sbin/vphsecproxy
+  rm /usr/lib/systemd/system/vphsecagent.service
+  rm /usr/lib/systemd/system/vphsecproxy.service
+  userdel secproxy
 }
 
 # vim:set ts=2 sw=2 et:
