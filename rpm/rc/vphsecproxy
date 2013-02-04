@@ -50,7 +50,7 @@ service_start() {
     fi 
 
     echo "Starting SecProxy... "
-    $SU secproxy -c "${JAVA} -classpath ${CLASSPATH}:. com.atos.SecProxyLauncher &> ${SECPROXY_LOGS}/proxy_console.log & echo \$! >> ${SECPROXY_PIDS}"
+    $SU secproxy -c "${JAVA} -classpath ${CLASSPATH}:. com.atos.proxy.SecProxyLauncher &> ${SECPROXY_LOGS}/proxy_console.log & echo \$! >> ${SECPROXY_PIDS}"
     cd - > /dev/null
 
 }
