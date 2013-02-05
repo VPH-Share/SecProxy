@@ -1,0 +1,17 @@
+[Unit]
+Description=VPH-Share Security Proxy
+After=network.target
+
+[Service]
+Type=simple
+User=secproxy
+Group=secproxy
+PIDFile=/var/run/vph-secproxy/secproxy.pid
+ExecStart=/usr/sbin/vphsecproxy start
+ExecStop=/usr/sbin/vphsecproxy stop
+ExecReload=/usr/sbin/vphsecproxy restart
+#Restart=always
+#RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

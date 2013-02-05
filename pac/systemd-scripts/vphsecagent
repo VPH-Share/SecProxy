@@ -1,0 +1,91 @@
+#!/bin/bash
+#
+# vphsecagent      This is the init script for starting up the VPH-SHARE Security Agent
+#
+# chkconfig: 2345 80 20
+#
+# description:  This is a VPH-Share Security Agent that manages the Security Proxy.
+# processname:  SecAgentLauncher
+# config: 	/home/vph/SecAgent/SecAgent.properties
+# pidfile: 	/home/vph/SecAgent/tmp/secagent.pid
+#
+SECAGENT_PATH="/etc/vph-secproxy"
+SECAGENT_LIB="/usr/share/vph-secproxy"
+SECAGENT_LOGS="/var/log/vph-secproxy"
+SECAGENT_PIDS="/var/run/vph-secproxy/secagent.pid"
+JAVA=`which java`
+
+# See how we were called.
+case "$1" in
+    start)
+        echo "Starting SecAgent backend: "
+        
+        if [ -f ${SECAGENT_PIDS} ]; then
+					exec<${SECAGENT_PIDS}
+	        while read pid
+           	do
+							if ps ax | grep -v grep | grep $pid | grep "SecAgent" > /dev/null
+							then
+		          	echo "SecAgent backend already started."
+		           	exit                
+							else
+			   				echo "SecAgent is not running"
+		           	rm ${SECAGENT_PIDS}
+			   				break
+							fi	            
+           	done             
+        fi        
+        echo " * Starting Agent ..."
+		
+	cd ${SECAGENT_PATH}
+	CLASSPATH=""
+	for d in `ls $SECAGENT_LIB` ; do
+                CLASSPATH=$CLASSPATH:$SECAGENT_LIB/$d
+        done
+
+	${JAVA} -classpath ${CLASSPATH} com.atos.SecAgentLauncher &> ${SECAGENT_LOGS}/agent_console.log &
+      	pid=$!
+      	echo $pid >> ${SECAGENT_PIDS}
+	            
+        echo "SecAgent backend succesfully started."
+        cd -
+        #wait $pid
+    ;;
+    
+    stop)
+        echo "Stopping SecAgent backend: "
+        
+        if [ -f ${SECAGENT_PIDS} ]; then
+           exec<${SECAGENT_PIDS}
+           while read pid
+           do
+            echo " * Killing process $pid"
+            kill -9 $pid
+           done  
+           
+           rm ${SECAGENT_PIDS}
+        else
+           echo "SecAgent backend already stoped."       
+        fi              
+    ;;
+
+    status)
+        echo -n "SecAgent backend status: "        
+        if [ -f ${SECAGENT_PIDS} ]; then
+            echo "STARTED"
+        else
+            echo "STOPPED"  
+        fi
+    ;;
+
+    restart)
+        $0 stop
+        $0 start
+    ;;
+    *)
+        echo "Usage: vphsecagent {start|stop|status|restart}"
+        exit 1
+    ;;    
+esac
+
+exit 0

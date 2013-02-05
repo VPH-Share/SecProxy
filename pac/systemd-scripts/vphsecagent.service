@@ -1,0 +1,18 @@
+[Unit]
+Description=VPH-Share Security Agent
+After=network.target
+
+[Service]
+Type=simple
+User=secproxy
+Group=secproxy
+
+PIDFile=/var/run/vph-secproxy/secagent.pid
+ExecStart=/usr/sbin/vphsecagent start
+ExecStop=/usr/sbin/vphsecagent stop
+ExecReload=/usr/sbin/vphsecagent restart
+#Restart=always
+#RestartSec=0
+
+[Install]
+WantedBy=multi-user.target
