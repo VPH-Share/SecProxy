@@ -1,11 +1,15 @@
 debian/input/lib/commons-configuration-1.8.jar /usr/share/vph-secproxy/lib
 debian/input/lib/commons-lang-2.6.jar /usr/share/vph-secproxy/lib
 debian/input/lib/commons-logging-1.1.1.jar /usr/share/vph-secproxy/lib
+debian/input/lib/commons-httpclient-3.1.jar /usr/share/vph-secproxy/lib
 debian/input/lib/httpclient-4.2.1.jar /usr/share/vph-secproxy/lib
 debian/input/lib/httpcore-4.2.1.jar /usr/share/vph-secproxy/lib
 debian/input/lib/httpcore-nio-4.2.1.jar /usr/share/vph-secproxy/lib
 debian/input/lib/SecAgent.jar /usr/share/vph-secproxy/lib
 debian/input/lib/SecProxy.jar /usr/share/vph-secproxy/lib
+debian/input/lib/PolicyEngine.jar /usr/share/vph-secproxy/lib
+debian/input/lib/sunxacml-2.0-SNAPSHOT.jar /usr/share/vph-secproxy/lib
+debian/input/lib/sunxacml-support-2.0.jar /usr/share/vph-secproxy/lib
 debian/input/log.properties /etc/vph-secproxy
 debian/input/mi_pub_key.pem /etc/vph-secproxy
 debian/input/SecAgent.log.properties /etc/vph-secproxy
