@@ -13,7 +13,7 @@
 SECPROXY_PATH="/etc/vph-secproxy"
 SECPROXY_LIB="/usr/share/vph-secproxy/lib"
 SECPROXY_LOGS="/var/log/vph-secproxy"
-SECPROXY_PIDS="/var/run/secproxy.pid"
+SECPROXY_PIDS="/var/run/vph-secproxy/secproxy.pid"
 JAVA=`which java`
 
 
@@ -47,7 +47,7 @@ case "$1" in
                 CLASSPATH=$CLASSPATH:$SECPROXY_LIB/$d
         done
 
-        ${JAVA} -classpath ${CLASSPATH} com.atos.SecProxyLauncher &> ${SECPROXY_LOGS}/proxy_console.log &
+        ${JAVA} -classpath ${CLASSPATH} com.atos.proxy.SecProxyLauncher &> ${SECPROXY_LOGS}/proxy_console.log &
       	pid=$!
       	echo $pid >> ${SECPROXY_PIDS}
 	            
