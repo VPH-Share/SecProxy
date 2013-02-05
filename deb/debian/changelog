@@ -1,5 +1,5 @@
-vph-secproxy (1.0) unstable; urgency=low
+vph-secproxy (1.1) unstable; urgency=low
 
-  * Initial release (Closes: #723) Initial deb created
+  * Initial release (Closes: #718, #719, #720) Initial deb created. This release includes a policy based authorization control (PBAC) retrieving policies from the Cloud Facade.
 
- -- Marek Kasztelnik <m.kasztelnik@cyfronet.pl>  Fri, 21 Sep 2012 12:29:45 +0200
+ -- Rodrigo Diaz <rodrigo.diaz@atosresearch.eu>  Tue, 30 Jan 2013 10:32:00 +0100
