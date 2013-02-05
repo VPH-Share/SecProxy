@@ -3,3 +3,5 @@
 /var/log/vph-secproxy
 /etc/vph-secproxy
 /etc/vph-secproxy/templates
+/var/run/vph-secproxy
+/var/cache/vph-secproxy
