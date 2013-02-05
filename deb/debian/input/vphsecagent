@@ -12,7 +12,7 @@
 SECAGENT_LIB="/usr/share/vph-secproxy/lib"
 SECAGENT_PATH="/etc/vph-secproxy"
 SECAGENT_LOGS="/var/log/vph-secproxy"
-SECAGENT_PIDS="/var/run/secagent.pid"
+SECAGENT_PIDS="/var/run/vph-secproxy/secagent.pid"
 JAVA=`which java`
 
 # See how we were called.
