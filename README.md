@@ -16,6 +16,8 @@ In the feature we can use fakeroot to avoid `sudo`
 Building pacman package manual
 -------
 
+* Ensure the base-devel group is installed. Packages belonging to this group are not required to be listed as dependencies in PKGBUILD files. (pacman -S base-devel
+)
 * Copy `SecProxy.tar.gz` into `pac/$pkgname-$pkgver.tar.gz`
 * Generate md5 sum and update `PKGBUILD` file (`makepkg -g >> PKGBUILD`)
 * Generate pacman package (`makepkg`, use `makepkg -s` to install required dependencies) 
